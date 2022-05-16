@@ -4,7 +4,7 @@ import bs4
 import requests
 
 web = 'https://habr.com/ru/all/' 
-KEYWORDS = ['дизайн', 'фото', 'web', 'python']
+KEYWORDS = ['сервер *', 'дизайн *', 'фото', 'web','блок питания', 'python', 'безопасность', 'браузер', 'Хранилища данных', 'Облачные сервисы']
 
 HEADERS = {'Accept': 'text/html,application/xhtml+xml,application/xml;q=0.9,image/avif,image/webp,image/apng,*/*;q=0.8,application/signed-exchange;v=b3;q=0.9',
 'Accept-Encoding':'gzip, deflate, br',
@@ -31,15 +31,17 @@ text = response.text
 
 soup = bs4.BeautifulSoup(text, features='html.parser')
 articles = soup.find_all('article')
+
 for article in articles:
-    hubs = article.find_all(class_='tm-articles-list')
+    hubs = article.find_all(class_='tm-article-snippet__hubs-item')
+    href = article.find(class_='tm-article-snippet__title-link').attrs['href']
     hubs = set(hub.text.strip() for hub in hubs)
     for hub in hubs:
         if hub in KEYWORDS:
-            href = article.fild(class_='tm-article-snippet__title-link').attrs['href']
             url = (web + href)
-            title = article.fild('h2').fild('span').text
-            result =f'Статья {title} - {url}'
+            title = article.find('h2').find('span').text
+            time = article.find(class_ = 'tm-article-snippet__datetime-published').text
+            result = f'Статья {title} - {url} - {time}'
             print(result)
 
 
